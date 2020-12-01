@@ -1,7 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import routes from './routes'
+import {GetContents, CheckAns} from './routes/question'
 import mongoose from 'mongoose'
+import { getConfig } from '@testing-library/react'
 
 require('dotenv').config()
 const app = express()
@@ -26,9 +28,23 @@ const dboptions = {
   poolSize: 10
 }
 // TODO : connect mongodb here
+mongoose.connect(process.env.MONGO_URL, dboptions);
+const db = mongoose.connection;
 
-routes(app)
+db.once('open', () => {
+  console.log('db connected')
+  routes(app)
 
-app.listen(port, () => {
-  console.log(`Server is up on port ${port}.`)
+  app.get('/api/start', (req, res) => {
+    GetContents(req, res)
+  })
+
+  app.post('/api/check', (req, res) => {
+    CheckAns(req, res)
+  })
+
+  app.listen(port, () => {
+    console.log(`Server is up on port ${port}.`)
+  })
 })
+

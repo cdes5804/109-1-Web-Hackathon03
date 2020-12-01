@@ -10,26 +10,46 @@ function Question() {
   const [complete, setComplete] = useState(false)  // true if answered all questions
   const [contents, setContents] = useState([])     // to store questions
   const [ans, setAns] = useState([])               // to record your answers
-  const [score, setScore] = useState(0)            // Your score
+  const [scores, setScore] = useState(0)            // Your score
   const [current_question, setCurrentQuestion] = useState(0) // index to current question
 
-  const next = () => {
+  const next = async () => {
+    if (current_question === contents.length - 1) {
+      const {
+        data: {score}
+      } = await instance.post('check', { ans })
+      setScore(score)
+      setComplete(true)
+      return
+    }
+    setCurrentQuestion(current => current + 1)
     // TODO : switch to the next question,
     // and check answers to set the score after you finished the last question
   }
 
-  const choose = () => {
+  const choose = (e) => {
     // TODO : update 'ans' for the option you clicked
+    const choice = parseInt(e.target.name)
+    setAns(current => {
+      const newAns = [...ans]
+      newAns[current_question] = choice
+      return newAns
+    })
   }
 
-  const getQuestions = () => {
-    // TODO : get questions from backend
+  const getQuestions = async () => {
+    const {
+      data: {content}
+    } = await instance.get('/start')
+    setContents(content)
+    setCurrentQuestion(0)
+    setAns(Array(content.length).fill(0))
   }
 
   useEffect(() => {
     if (!contents.length)
       getQuestions()
-  })
+  }, [])
 
   // TODO : fill in the rendering contents and logic
   return (
@@ -38,19 +58,30 @@ function Question() {
         <React.Fragment>
           <div id="question-box">
             <div className="question-box-inner">
-
+              Question {contents[current_question].questionID} of {contents.length}
             </div>
           </div>
 
           <div id="question-title">
-            
+            {complete ? `Your Score: ${scores} / ${contents.length}` : contents[current_question].question}
           </div>
 
           <div id="options">
-            
+            {complete ? "" : contents[current_question].options.map((option, i) =>
+              <div className="each-option" key={`q${current_question + 1}_${i+1}`}>
+              <input 
+                type="radio" 
+                id={`q${current_question + 1}_${i+1}`}
+                name={i+1}
+                checked={ans[current_question] === i+1}
+                onChange={choose}
+              />
+              <span>{option}</span>
+            </div>
+            )}
           </div>
           
-          <div id="actions" onClick={next}>
+          <div id="actions" style={{display: complete ? "none": ""}} onClick={next}>
             NEXT
           </div>
         </React.Fragment>
