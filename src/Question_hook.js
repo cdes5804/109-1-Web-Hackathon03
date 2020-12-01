@@ -66,7 +66,8 @@ function Question() {
             {complete ? `Your Score: ${scores} / ${contents.length}` : contents[current_question].question}
           </div>
 
-          <div id="options">
+          {complete ? <div></div> : 
+          <div id={complete ? "" : "options"}>
             {complete ? "" : contents[current_question].options.map((option, i) =>
               <div className="each-option" key={`q${current_question + 1}_${i+1}`}>
               <input 
@@ -79,11 +80,12 @@ function Question() {
               <span>{option}</span>
             </div>
             )}
-          </div>
+          </div>}
           
-          <div id="actions" style={{display: complete ? "none": ""}} onClick={next}>
-            NEXT
-          </div>
+          {complete ? <div></div> :
+          <div id={complete ? "" : "actions"} onClick={next}>
+            {complete ? "" : "NEXT"}
+          </div>}
         </React.Fragment>
         : <React.Fragment></React.Fragment>
       }
