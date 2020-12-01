@@ -34,15 +34,6 @@ const db = mongoose.connection;
 db.once('open', () => {
   console.log('db connected')
   routes(app)
-
-  app.get('/api/getContents', (req, res) => {
-    GetContents(req, res)
-  })
-
-  app.post('/api/checkAns', (req, res) => {
-    CheckAns(req, res)
-  })
-
   app.listen(port, () => {
     console.log(`Server is up on port ${port}.`)
   })
