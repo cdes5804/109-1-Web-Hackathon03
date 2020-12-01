@@ -17,7 +17,7 @@ function Question() {
     if (current_question === contents.length - 1) {
       const {
         data: {score}
-      } = await instance.post('check', { ans })
+      } = await instance.post('/checkAns', { ans })
       setScore(score)
       setComplete(true)
       return
@@ -40,7 +40,7 @@ function Question() {
   const getQuestions = async () => {
     const {
       data: {content}
-    } = await instance.get('/start')
+    } = await instance.get('/getContents')
     setContents(content)
     setCurrentQuestion(0)
     setAns(Array(content.length).fill(0))

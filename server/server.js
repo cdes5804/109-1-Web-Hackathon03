@@ -35,11 +35,11 @@ db.once('open', () => {
   console.log('db connected')
   routes(app)
 
-  app.get('/api/start', (req, res) => {
+  app.get('/api/getContents', (req, res) => {
     GetContents(req, res)
   })
 
-  app.post('/api/check', (req, res) => {
+  app.post('/api/checkAns', (req, res) => {
     CheckAns(req, res)
   })
 
